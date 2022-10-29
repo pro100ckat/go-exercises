@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// 6 если слип закоменчен
+// 2 если раскоменчен
 func TestGoroutines1() {
 	var ch = make(chan int)
 	for i := 0; i < 3; i++ {
@@ -13,10 +15,15 @@ func TestGoroutines1() {
 			ch <- (idx + 1) * 2
 		}(i)
 	}
-
 	fmt.Println("result:", <-ch)
-	//time.Sleep(2 * time.Second)
 }
+
+//либо
+//processed: cmd.1
+//processed: cmd.2
+
+// либо
+//processed: cmd.1
 
 // что мы увидим в stdout?
 func TestGoroutines2() {
@@ -29,10 +36,11 @@ func TestGoroutines2() {
 
 	ch <- "cmd.1"
 	ch <- "cmd.2"
-
-	// рандом
 }
 
+// three three three
+// потому цикл пробежит быстрее чем запустятся горутины, и при этом горутины смотрят на одну область памяти яйчейки памяти  v.
+// Loop variables captured by 'func' literals in 'go' statements might have unexpected values. Подсказка IDE.
 func TestGoroutines3() {
 	data := []string{"one", "two", "three"}
 	for _, v := range data {
@@ -41,11 +49,9 @@ func TestGoroutines3() {
 		}()
 	}
 	time.Sleep(3 * time.Second)
-	// three three three
-	// потому цикл пробежит быстрее чем запустятся горутины, и при этом горутины смотрят на одну область памяти яйчейки памяти  v.
-	// Loop variables captured by 'func' literals in 'go' statements might have unexpected values. Подсказка IDE.
 }
 
+// любое число от 0 до 9999. Чем плох этот код?
 func TestGoroutines4() {
 	var num int
 
@@ -55,20 +61,24 @@ func TestGoroutines4() {
 		}(i)
 	}
 	fmt.Printf("NUM is %d", num)
-	// любое число от 0 до 9999
 }
 
+// нельзя так писать в map
+// что будет выведено на экран? а если увеличить i до 10 000
 func TestGoroutines5() {
 	dataMap := make(map[string]int)
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < 10; i++ {
 		go func(d map[string]int, num int) {
 			d[fmt.Sprintf("%d", num)] = num
 		}(dataMap, i)
 	}
 	time.Sleep(5 * time.Second)
 	fmt.Println(len(dataMap))
-	// нельзя так писать в map
 }
+
+// если закоментить runtime.Gosched() x будет = 20000000000.
+// Gosched позволяют запускать другие горутины если GOMAXPROCS = 1, а в частнгсти, передать вызов горутине main. Из за того что GOMAXPROCS 1
+// Число будет любое или 20000000000
 
 func TestGoroutines6() {
 	runtime.GOMAXPROCS(1)
@@ -77,10 +87,8 @@ func TestGoroutines6() {
 	go func(p *int) {
 		for i := 1; i <= 20000000000; i++ {
 			*p = i
-			// если закоментить runtime.Gosched() x будет = 20000000000.
-			// Gosched позволяют запускать другие горутины если GOMAXPROCS = 1, а в частнгсти, передать вызов горутине main. Из за того что GOMAXPROCS 1
+
 			runtime.Gosched()
-			// Число будет любое или 20000000000
 		}
 	}(&x)
 
@@ -88,6 +96,7 @@ func TestGoroutines6() {
 	fmt.Printf("x = %d.\n", x)
 }
 
+// 3 9
 func TestGoroutines7() {
 	c := make(chan int)
 	d := make(chan struct{})
@@ -104,5 +113,4 @@ func TestGoroutines7() {
 	}(c)
 
 	<-d
-	// 3 9
 }

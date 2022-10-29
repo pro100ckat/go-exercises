@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	examples.TestString1()
+	examples.TestGoroutines1()
 }

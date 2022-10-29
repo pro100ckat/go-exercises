@@ -18,12 +18,13 @@ func TestData1() {
 		Age      int
 		NickName string
 	}{"Pasha", 35, "Goshnik"}
+
 	compareStruct(realFoo, fakeFoo)
 }
 
+// false
 func compareStruct(a, b interface{}) {
 	fmt.Println(a == b)
-	// false
 }
 
 type MyData struct {
@@ -31,6 +32,9 @@ type MyData struct {
 	Two string `json:"two"`
 }
 
+// examples.MyData{One:1, Two:"two"}
+// {"one":1,"two":"two"}
+// examples.MyData{One:1, Two:"two"}
 func TestData2() {
 	in := MyData{1, "two"}
 
@@ -40,20 +44,6 @@ func TestData2() {
 	var out MyData
 	json.Unmarshal(encoded, &out)
 	fmt.Printf("%#v\n", out) // что отобразится после вызова?
-
-	// examples.MyData{One:1, Two:"two"}
-	// {"one":1,"two":"two"}
-	// examples.MyData{One:1, Two:"two"}
-}
-
-func TestData3() {
-	a := []int{1, 2, 3, 4}
-	result := make([]*int, len(a))
-	for i, v := range a {
-		result[i] = &v
-	}
-	fmt.Println(result)
-	// 4 4 4 4
 }
 
 type data struct {
@@ -92,12 +82,11 @@ type user struct {
 	name string
 }
 
+// указатели не равны, false
 func TestData5() {
 	u1 := getUser()
 	u2 := getUser()
-
 	fmt.Println(u1 == u2)
-	// указатели не равны, false
 }
 
 func getUser() *user {

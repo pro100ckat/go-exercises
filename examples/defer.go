@@ -2,6 +2,7 @@ package examples
 
 import "fmt"
 
+// 0 0
 func Defer() {
 	var n int
 
@@ -16,5 +17,4 @@ func Defer() {
 	}
 
 	defer f()
-	// 0 0
 }
